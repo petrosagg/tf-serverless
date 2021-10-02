@@ -7,7 +7,9 @@ WORKDIR /home/rust
 # Copy all the sources
 COPY function ./function
 
-RUN cd function && cargo build --target x86_64-unknown-linux-musl --release
+ARG HANDLER_PACKAGE
+
+RUN cd function && cargo build --target x86_64-unknown-linux-musl --release --bin $HANDLER_PACKAGE
 
 FROM alpine:3.11 as runner
 
@@ -21,8 +23,12 @@ ENV USER=app
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog
 
+# Copy main binary
+COPY --from=builder /home/rust/function/target/x86_64-unknown-linux-musl/release/$HANDLER_PACKAGE /usr/bin/main
+RUN chmod +x /usr/bin/main
+
 # Set up watchdog for HTTP mode
-ENV fprocess="./function"
+ENV fprocess="main"
 ENV mode="http"
 ENV upstream_url="http://127.0.0.1:3000"
 

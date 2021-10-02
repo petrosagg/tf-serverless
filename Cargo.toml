@@ -1,8 +1,9 @@
 [workspace]
 
 members = [
-	"tf-serve",
-	"aws_lambda",
-	"tf-classify",
-	"openfaas/tf-classify"
+	"src/tf-serve",
+	"src/aws_lambda",
+	"src/tf-classify",
+	"src/tf-classify-openfaas",
+	"src/tf-classify-openfaas-dummy",
 ]
